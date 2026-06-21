@@ -4,24 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My YT Bookmarks - Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>My YT Bookmarks Pro</title>
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
     <div class="app-container">
 
+        <!-- شاشة الوعي الذكي بالخطأ -->
         <div id="errorScreen" class="error-container hidden">
             <div class="error-icon">⚠️</div>
-            <h4>من فضلك حدد فيديو فقط 📺</h4>
-            <p></p>
-            <a href="https://youtube.com" target="_blank" class="btn btn-gradient text-center hidden">الانتقال إلى منصة
-                يوتيوب 🚀</a>
+            <h4>عذرًا، أنت لست داخل فيديو!</h4>
+            <p>تعمل الإضافة فقط عند مشاهدة فيديو نشط على يوتيوب. افتح أي فيديو أولاً للتحكم بعلاماتك المرجعية.</p>
+            <a href="https://www.youtube.com" target="_blank" class="btn btn-gradient text-center">الانتقال إلى يوتيوب
+                🎬</a>
         </div>
 
+        <!-- المحتوى الرئيسي عند التحقق من الفيديو بنجاح -->
         <div id="mainContent">
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="current-video">
@@ -32,10 +34,11 @@
                 </button>
             </div>
 
+            <!-- تبويب الفيديو الحالي -->
             <div id="current-video" class="tab-content active">
                 <div class="video-info-card">
                     <div class="pulse-indicator"></div>
-                    <h3 id="videoTitle" class="video-title">جاري الفحص المباشر...</h3>
+                    <h3 id="videoTitle" class="video-title">جاري التعرف على الفيديو النشط...</h3>
                 </div>
 
                 <div class="add-bookmark-section">
@@ -43,31 +46,17 @@
                         <div class="icon-circle">📌</div>
                         <div class="btn-text">
                             <span class="primary-text">إضافة علامة مرجعية جديدة</span>
-                            <span class="secondary-text">حفظ التوقيت الحالي تلقائيًا</span>
+                            <span class="secondary-text">حفظ اللحظة الحالية في المتصفح</span>
                         </div>
                     </button>
                 </div>
 
-                <div id="quickAddContainer" class="modern-card quick-add-card hidden">
-                    <div class="card-header">
-                        <span class="card-icon">⏱️</span>
-                        <h4>حفظ علامة عند توقيت: <span id="capturedTimeBadge" class="badge">00:00</span></h4>
-                    </div>
-                    <div class="input-wrapper">
-                        <label>وصف أو عنوان اللحظة الحالية</label>
-                        <input type="text" id="customMarkerTitleInput" placeholder="اكتب وصفاً سريعاً هنا...">
-                    </div>
-                    <div class="loop-actions">
-                        <button id="saveCustomMarkerBtn" class="btn btn-gradient" style="flex: 2;">حفظ الآن 💾</button>
-                        <button id="cancelCustomMarkerBtn" class="btn btn-outline" style="flex: 1;">إلغاء</button>
-                    </div>
-                </div>
-
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو...">
+                    <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو بسرعة...">
                 </div>
 
+                <!-- ميزة الـ Loop -->
                 <div class="modern-card loop-card">
                     <div class="card-header">
                         <span class="card-icon">🔄</span>
@@ -75,11 +64,11 @@
                     </div>
                     <div class="loop-grid">
                         <div class="input-wrapper">
-                            <label>من (ثواني أو د:ث)</label>
+                            <label>من</label>
                             <input type="text" id="loopFrom" placeholder="0:00">
                         </div>
                         <div class="input-wrapper">
-                            <label>إلى (ثواني أو د:ث)</label>
+                            <label>إلى</label>
                             <input type="text" id="loopTo" placeholder="1:30">
                         </div>
                         <div class="input-wrapper full-width">
@@ -88,7 +77,6 @@
                                 <option value="1">مرة واحدة</option>
                                 <option value="2">مرتين</option>
                                 <option value="3">3 مرات</option>
-                                <option value="3">4 مرات</option>
                                 <option value="5">5 مرات</option>
                                 <option value="10">10 مرات</option>
                                 <option value="infinite" selected>بلا نهاية ∞</option>
@@ -96,7 +84,7 @@
                         </div>
                     </div>
                     <div class="loop-actions">
-                        <button id="startLoopBtn" class="btn btn-gradient">تفعيل التكرار</button>
+                        <button id="startLoopBtn" class="btn btn-gradient">تفعيل التكرار الذكي</button>
                         <button id="stopLoopBtn" class="btn btn-danger hidden">إيقاف التكرار</button>
                     </div>
                 </div>
@@ -104,23 +92,30 @@
                 <div class="section-title">العلامات المسجلة لهذا الفيديو</div>
                 <div class="markers-scroll-container">
                     <ul id="markersList" class="modern-list"></ul>
+                    <div id="noMarkers" class="status-empty-msg hidden">
+                        <span>💨</span> لا توجد علامات تطابق بحثك الحالي
+                    </div>
                 </div>
 
                 <div class="backup-grid">
-                    <button id="exportBtn" class="btn btn-outline">📥 تصدير البيانات</button>
-                    <label for="importFile" class="btn btn-outline text-center">📤 استيراد ملف</label>
+                    <button id="exportBtn" class="btn btn-outline">📥 تصدير البيانات (JSON)</button>
+                    <label for="importFile" class="btn btn-outline text-center">📤 استيراد ملف محفوظ</label>
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                 </div>
             </div>
 
+            <!-- تبويب السجل التاريخي والبحث العام في الفيديوهات -->
             <div id="all-videos" class="tab-content">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchSavedVideos" placeholder="ابحث باسم الفيديو المحفوظ...">
+                    <input type="text" id="searchVideoHistory" placeholder="ابحث باسم الفيديو المحفوظ هنا...">
                 </div>
-                <div class="section-title">الفيديوهات التي تمتلك علامات</div>
+                <div class="section-title">الفيديوهات المحفوظة مسبقاً</div>
                 <div class="markers-scroll-container">
                     <ul id="allVideosList" class="modern-list video-history-list"></ul>
+                    <div id="noVideos" class="status-empty-msg hidden">
+                        <span>📂</span> لا توجد فيديوهات تطابق بحثك.
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,4 +127,3 @@
 </body>
 
 </html>
-

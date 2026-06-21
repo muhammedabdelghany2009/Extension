@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My YT Bookmarks - Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- استدعاء خط قوقل الاحترافي Cairo -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
     <div class="app-container">
 
+        <!-- رسالة الخطأ والتحذيرات الذكية المبسطة للغاية -->
         <div id="errorScreen" class="error-container hidden">
             <div class="error-icon">⚠️</div>
             <h4>من فضلك حدد فيديو فقط 📺</h4>
@@ -22,6 +24,7 @@
                 يوتيوب 🚀</a>
         </div>
 
+        <!-- المحتوى الرئيسي النشط للبرنامج -->
         <div id="mainContent">
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="current-video">
@@ -32,12 +35,14 @@
                 </button>
             </div>
 
+            <!-- التبويب الأول: علامات وتكرار الفيديو الحالي -->
             <div id="current-video" class="tab-content active">
                 <div class="video-info-card">
                     <div class="pulse-indicator"></div>
                     <h3 id="videoTitle" class="video-title">جاري الفحص المباشر...</h3>
                 </div>
 
+                <!-- الزر الرئيسي المطور لإضافة العلامات المرجعية -->
                 <div class="add-bookmark-section">
                     <button id="addBookmarkBtn" class="main-action-btn">
                         <div class="icon-circle">📌</div>
@@ -48,6 +53,7 @@
                     </button>
                 </div>
 
+                <!-- كارت الإدخال التفاعلي الفاخر المدمج البديل لـ prompt المتصفح المزعج -->
                 <div id="quickAddContainer" class="modern-card quick-add-card hidden">
                     <div class="card-header">
                         <span class="card-icon">⏱️</span>
@@ -55,19 +61,23 @@
                     </div>
                     <div class="input-wrapper">
                         <label>وصف أو عنوان اللحظة الحالية</label>
-                        <input type="text" id="customMarkerTitleInput" placeholder="اكتب وصفاً سريعاً هنا...">
+                        <input type="text" id="customMarkerTitleInput"
+                            placeholder="اكتب وصفاً سريعاً هنا للعلامة المرجعية...">
                     </div>
-                    <div class="loop-actions">
+                    <div class="loop-actions" style="margin-top: 10px; display: flex; gap: 8px;">
                         <button id="saveCustomMarkerBtn" class="btn btn-gradient" style="flex: 2;">حفظ الآن 💾</button>
-                        <button id="cancelCustomMarkerBtn" class="btn btn-outline" style="flex: 1;">إلغاء</button>
+                        <button id="cancelCustomMarkerBtn" class="btn btn-outline"
+                            style="flex: 1; margin: 0; padding: 8px;">إلغاء</button>
                     </div>
                 </div>
 
+                <!-- شريط البحث الفوري داخل الفيديو الحالي -->
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو...">
+                    <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو الحالي...">
                 </div>
 
+                <!-- كارد ميزة التكرار المستمر المبرمج (A-B Loop) -->
                 <div class="modern-card loop-card">
                     <div class="card-header">
                         <span class="card-icon">🔄</span>
@@ -83,12 +93,11 @@
                             <input type="text" id="loopTo" placeholder="1:30">
                         </div>
                         <div class="input-wrapper full-width">
-                            <label>مرات التكرار</label>
+                            <label>مرات التكرار المبرمجة</label>
                             <select id="loopCount">
                                 <option value="1">مرة واحدة</option>
                                 <option value="2">مرتين</option>
                                 <option value="3">3 مرات</option>
-                                <option value="3">4 مرات</option>
                                 <option value="5">5 مرات</option>
                                 <option value="10">10 مرات</option>
                                 <option value="infinite" selected>بلا نهاية ∞</option>
@@ -96,7 +105,7 @@
                         </div>
                     </div>
                     <div class="loop-actions">
-                        <button id="startLoopBtn" class="btn btn-gradient">تفعيل التكرار</button>
+                        <button id="startLoopBtn" class="btn btn-gradient">تفعيل التكرار المكرر</button>
                         <button id="stopLoopBtn" class="btn btn-danger hidden">إيقاف التكرار</button>
                     </div>
                 </div>
@@ -104,6 +113,9 @@
                 <div class="section-title">العلامات المسجلة لهذا الفيديو</div>
                 <div class="markers-scroll-container">
                     <ul id="markersList" class="modern-list"></ul>
+                    <div id="noMarkers" class="status-empty-msg hidden">
+                        <span>💨</span> لا توجد علامات تطابق هذا البحث
+                    </div>
                 </div>
 
                 <div class="backup-grid">
@@ -113,14 +125,19 @@
                 </div>
             </div>
 
+            <!-- التبويب الثاني: سجل كل الفيديوهات المحفوظة مع شريط البحث لمنع التوهان -->
             <div id="all-videos" class="tab-content">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchSavedVideos" placeholder="ابحث باسم الفيديو المحفوظ...">
+                    <input type="text" id="searchSavedVideos"
+                        placeholder="ابحث باسم الفيديو المحفوظ في قاعدة البيانات...">
                 </div>
-                <div class="section-title">الفيديوهات التي تمتلك علامات</div>
+                <div class="section-title">الفيديوهات التي تمتلك علامات مسبقة</div>
                 <div class="markers-scroll-container">
                     <ul id="allVideosList" class="modern-list video-history-list"></ul>
+                    <div id="noVideos" class="status-empty-msg hidden">
+                        <span>📂</span> لم يتم العثور على فيديوهات مطابقة
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,4 +149,3 @@
 </body>
 
 </html>
-

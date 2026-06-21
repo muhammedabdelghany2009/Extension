@@ -1,10 +1,17 @@
+// ============================================
+// المتغيرات العامة
+// ============================================
 let currentVideoId = "default_video";
 let currentVideoTitle = "فيديو يوتيوب نشط";
 let temporarySeconds = 0;
 let temporaryFormattedTime = "00:00";
 let allBookmarksData = {};
 
+// ============================================
+// تحميل الصفحة وإعداد المستمعات
+// ============================================
 document.addEventListener('DOMContentLoaded', async () => {
+    // تفعيل مستمعات الأزرار
     document.getElementById('addBookmarkBtn').addEventListener('click', askAndAddNewMarker);
     document.getElementById('searchMarker').addEventListener('input', searchCurrentVideoMarkers);
     document.getElementById('searchSavedVideos').addEventListener('input', searchInSavedVideosHistory);
@@ -17,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadAllData();
     executeDirectDynamicCheck();
 
+    // الاستماع لإشارة الدبوس
     chrome.runtime.onMessage.addListener((request) => {
         if (request.action === "TRIGGER_POPUP_ADD") {
             askAndAddNewMarker();
@@ -24,6 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+// ============================================
+// تحميل كل البيانات
+// ============================================
 function loadAllData() {
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         allBookmarksData = result.yt_bookmarks_data || {};
@@ -31,6 +42,9 @@ function loadAllData() {
     });
 }
 
+// ============================================
+// فحص الفيديو الحالي
+// ============================================
 async function executeDirectDynamicCheck() {
     const errorScreen = document.getElementById('errorScreen');
     const mainContent = document.getElementById('mainContent');
@@ -71,12 +85,16 @@ async function executeDirectDynamicCheck() {
     currentVideoTitle = pageTitle;
     document.getElementById('videoTitle').textContent = currentVideoTitle;
 
+    // استخراج Video ID من الرابط
     const urlParams = new URLSearchParams(currentTab.url.split('?')[1]);
     currentVideoId = urlParams.get('v') || 'default_video';
 
     loadCurrentVideoMarkersFromStorage();
 }
 
+// ============================================
+// التنقل بين التبويبات
+// ============================================
 function setupTabsNavigation() {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -88,6 +106,9 @@ function setupTabsNavigation() {
     });
 }
 
+// ============================================
+// فتح نافذة الإضافة السريعة
+// ============================================
 async function askAndAddNewMarker() {
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -113,6 +134,9 @@ async function askAndAddNewMarker() {
     });
 }
 
+// ============================================
+// حفظ العلامة من الفورم الداخلي
+// ============================================
 function saveCustomMarkerFromInlineForm() {
     const inputField = document.getElementById('customMarkerTitleInput');
     const markerTitle = inputField.value.trim();
@@ -131,6 +155,9 @@ function saveCustomMarkerFromInlineForm() {
     document.getElementById('quickAddContainer').classList.add('hidden');
 }
 
+// ============================================
+// حفظ العلامة في التخزين
+// ============================================
 function saveBookmarkToStorage(videoId, videoTitle, markerTitle, formattedTime, seconds) {
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         let data = result.yt_bookmarks_data || {};
@@ -156,11 +183,14 @@ function saveBookmarkToStorage(videoId, videoTitle, markerTitle, formattedTime, 
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم حفظ العلامة بنجاح!');
+            showToast('✅ تم حفظ العلامة بنجاح!');
         });
     });
 }
 
+// ============================================
+// تحميل وعرض علامات الفيديو الحالي
+// ============================================
 function loadCurrentVideoMarkersFromStorage() {
     const list = document.getElementById('markersList');
     list.innerHTML = '';
@@ -236,6 +266,9 @@ function loadCurrentVideoMarkersFromStorage() {
     });
 }
 
+// ============================================
+// نافذة التعديل
+// ============================================
 function showEditDialog(markerId, currentTitle) {
     const overlay = document.createElement('div');
     overlay.className = 'edit-dialog-overlay';
@@ -264,7 +297,7 @@ function showEditDialog(markerId, currentTitle) {
     document.getElementById('editSaveBtn').addEventListener('click', () => {
         const newTitle = document.getElementById('editMarkerInput').value.trim();
         if (!newTitle) {
-            showToast('الرجاء إدخال وصف صحيح');
+            showToast('⚠️ الرجاء إدخال وصف صحيح');
             return;
         }
         updateMarkerTitle(markerId, newTitle);
@@ -278,6 +311,9 @@ function showEditDialog(markerId, currentTitle) {
     });
 }
 
+// ============================================
+// تحديث عنوان العلامة
+// ============================================
 function updateMarkerTitle(markerId, newTitle) {
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         let data = result.yt_bookmarks_data || {};
@@ -292,13 +328,16 @@ function updateMarkerTitle(markerId, newTitle) {
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم تحديث الوصف بنجاح!');
+            showToast('✅ تم تحديث الوصف بنجاح!');
         });
     });
 }
 
+// ============================================
+// حذف العلامة
+// ============================================
 function deleteMarker(markerId) {
-    if (!confirm('هل أنت متأكد من حذف هذه العلامة؟')) return;
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذه العلامة؟')) return;
 
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         let data = result.yt_bookmarks_data || {};
@@ -315,11 +354,14 @@ function deleteMarker(markerId) {
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم حذف العلامة بنجاح!');
+            showToast('🗑️ تم حذف العلامة بنجاح!');
         });
     });
 }
 
+// ============================================
+// عرض قائمة كل الفيديوهات المحفوظة
+// ============================================
 function refreshAllVideosHistoryList() {
     const historyList = document.getElementById('allVideosList');
     historyList.innerHTML = '';
@@ -368,6 +410,7 @@ function refreshAllVideosHistoryList() {
                             `;
                             div.addEventListener('click', async (event) => {
                                 event.stopPropagation();
+                                // فتح الفيديو في علامة تبويب جديدة
                                 chrome.tabs.create({ url: `https://youtube.com/watch?v=${key}&t=${Math.floor(marker.seconds)}s` });
                             });
                             subList.appendChild(div);
@@ -383,6 +426,9 @@ function refreshAllVideosHistoryList() {
     });
 }
 
+// ============================================
+// البحث
+// ============================================
 function searchCurrentVideoMarkers(e) {
     const query = e.target.value.toLowerCase().trim();
     const items = document.querySelectorAll('#markersList li');
@@ -401,10 +447,14 @@ function searchInSavedVideosHistory(e) {
     });
 }
 
+// ============================================
+// تصدير البيانات بصيغة منسقة
+// ============================================
 function exportStorageToJson() {
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         const data = result.yt_bookmarks_data || {};
 
+        // تنسيق البيانات للتصدير
         const formattedData = {};
         Object.keys(data).forEach(key => {
             const video = data[key];
@@ -433,10 +483,13 @@ function exportStorageToJson() {
         a.remove();
         URL.revokeObjectURL(url);
 
-        showToast('تم تصدير البيانات بنجاح!');
+        showToast('📤 تم تصدير البيانات بنجاح!');
     });
 }
 
+// ============================================
+// استيراد البيانات
+// ============================================
 function importStorageFromJson(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -446,6 +499,7 @@ function importStorageFromJson(e) {
         try {
             const importedData = JSON.parse(evt.target.result);
 
+            // تحويل البيانات المستوردة للصيغة المطلوبة
             const formattedData = {};
             Object.keys(importedData).forEach(key => {
                 const video = importedData[key];
@@ -467,23 +521,26 @@ function importStorageFromJson(e) {
                 allBookmarksData = formattedData;
                 loadCurrentVideoMarkersFromStorage();
                 refreshAllVideosHistoryList();
-                showToast('تم استيراد البيانات بنجاح!');
+                showToast('📥 تم استيراد البيانات بنجاح!');
             });
         } catch (err) {
-            alert('الملف غير صالح. تأكد من أنه ملف JSON صحيح.');
+            alert('❌ الملف غير صالح. تأكد من أنه ملف JSON صحيح.');
         }
     };
     reader.readAsText(file);
     e.target.value = '';
 }
 
+// ============================================
+// ميزة التكرار
+// ============================================
 async function startLoopSequence() {
     const from = document.getElementById('loopFrom').value;
     const to = document.getElementById('loopTo').value;
     const count = document.getElementById('loopCount').value;
 
     if (!from || !to) {
-        showToast('فضلاً أدخل نطاق الوقت!');
+        showToast('⚠️ فضلاً أدخل نطاق الوقت!');
         return;
     }
 
@@ -491,7 +548,7 @@ async function startLoopSequence() {
     chrome.tabs.sendMessage(activeTab.id, { action: "START_LOOP", from, to, count });
     document.getElementById('startLoopBtn').classList.add('hidden');
     document.getElementById('stopLoopBtn').classList.remove('hidden');
-    showToast('بدء التكرار...');
+    showToast('🔄 بدء التكرار...');
 }
 
 async function stopLoopSequence() {
@@ -499,9 +556,12 @@ async function stopLoopSequence() {
     chrome.tabs.sendMessage(activeTab.id, { action: "STOP_LOOP" });
     document.getElementById('startLoopBtn').classList.remove('hidden');
     document.getElementById('stopLoopBtn').classList.add('hidden');
-    showToast('تم إيقاف التكرار');
+    showToast('⏹️ تم إيقاف التكرار');
 }
 
+// ============================================
+// إشعارات
+// ============================================
 function showToast(message) {
     const existing = document.querySelector('.custom-toast');
     if (existing) existing.remove();
@@ -519,6 +579,9 @@ function showToast(message) {
     }, 2800);
 }
 
+// ============================================
+// دوال مساعدة
+// ============================================
 function generateUniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
 }
@@ -541,6 +604,9 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// ============================================
+// إضافة CSS للحركات
+// ============================================
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
     .custom-toast {
@@ -653,3 +719,5 @@ styleSheet.textContent = `
     }
 `;
 document.head.appendChild(styleSheet);
+
+console.log('✅ YouTube Bookmarks Popup - جاهز!');

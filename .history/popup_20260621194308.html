@@ -14,6 +14,7 @@
 <body>
     <div class="app-container">
 
+        <!-- رسالة الخطأ -->
         <div id="errorScreen" class="error-container hidden">
             <div class="error-icon">⚠️</div>
             <h4>من فضلك حدد فيديو فقط 📺</h4>
@@ -22,6 +23,7 @@
                 يوتيوب 🚀</a>
         </div>
 
+        <!-- المحتوى الرئيسي -->
         <div id="mainContent">
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="current-video">
@@ -32,12 +34,14 @@
                 </button>
             </div>
 
+            <!-- التبويب الأول -->
             <div id="current-video" class="tab-content active">
                 <div class="video-info-card">
                     <div class="pulse-indicator"></div>
                     <h3 id="videoTitle" class="video-title">جاري الفحص المباشر...</h3>
                 </div>
 
+                <!-- زر الإضافة -->
                 <div class="add-bookmark-section">
                     <button id="addBookmarkBtn" class="main-action-btn">
                         <div class="icon-circle">📌</div>
@@ -48,6 +52,7 @@
                     </button>
                 </div>
 
+                <!-- كارت الإضافة السريع -->
                 <div id="quickAddContainer" class="modern-card quick-add-card hidden">
                     <div class="card-header">
                         <span class="card-icon">⏱️</span>
@@ -63,11 +68,13 @@
                     </div>
                 </div>
 
+                <!-- بحث -->
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو...">
                 </div>
 
+                <!-- ميزة التكرار -->
                 <div class="modern-card loop-card">
                     <div class="card-header">
                         <span class="card-icon">🔄</span>
@@ -88,7 +95,6 @@
                                 <option value="1">مرة واحدة</option>
                                 <option value="2">مرتين</option>
                                 <option value="3">3 مرات</option>
-                                <option value="3">4 مرات</option>
                                 <option value="5">5 مرات</option>
                                 <option value="10">10 مرات</option>
                                 <option value="infinite" selected>بلا نهاية ∞</option>
@@ -113,6 +119,7 @@
                 </div>
             </div>
 
+            <!-- التبويب الثاني -->
             <div id="all-videos" class="tab-content">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
@@ -132,4 +139,3 @@
 </body>
 
 </html>
-

@@ -662,3 +662,16 @@ body {
     }
 }
 
+/* تصدير البيانات بشكل منسق */
+.export-data-preview {
+    direction: ltr;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}

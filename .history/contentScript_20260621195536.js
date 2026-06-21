@@ -1,5 +1,12 @@
+// ============================================
+// Content Script - حقن زر الدبوس والكارت الأبيض
+// ============================================
+
 let loopIntervalTimer = null;
 
+// ============================================
+// دالة حقن زر الدبوس 📌
+// ============================================
 function injectPremiumBookmarkButton() {
     const youtubeControlsRight = document.querySelector('.ytp-right-controls');
 
@@ -38,25 +45,33 @@ function injectPremiumBookmarkButton() {
 
             const videoElement = document.querySelector('video');
             if (!videoElement) {
-                alert('لم يتم العثور على مشغل الفيديو!');
+                alert('❌ لم يتم العثور على مشغل الفيديو!');
                 return;
             }
 
             videoElement.pause();
+
+            // فتح الكارت الأبيض مباشرة
             const currentTime = videoElement.currentTime;
             showWhiteCard(currentTime);
         });
 
         youtubeControlsRight.insertBefore(quickBtn, youtubeControlsRight.firstChild);
+        console.log('✅ زر الدبوس تم إضافته بنجاح!');
     }
 }
 
+// ============================================
+// دالة عرض الكارت الأبيض في منتصف الشاشة
+// ============================================
 function showWhiteCard(currentTime) {
+    // إزالة أي كارت موجود
     const existingCard = document.getElementById('yt-custom-white-card');
     if (existingCard) existingCard.remove();
 
     const formattedTime = formatTime(currentTime);
 
+    // خلفية شفافة
     const backdrop = document.createElement('div');
     backdrop.id = 'yt-white-card-backdrop';
     backdrop.style.cssText = `
@@ -67,6 +82,7 @@ function showWhiteCard(currentTime) {
         animation: fadeIn 0.2s ease;
     `;
 
+    // الكارت الأبيض
     const card = document.createElement('div');
     card.id = 'yt-custom-white-card';
     card.style.cssText = `
@@ -132,9 +148,11 @@ function showWhiteCard(currentTime) {
         </div>
     `;
 
+    // إضافة العناصر للصفحة
     document.body.appendChild(backdrop);
     document.body.appendChild(card);
 
+    // إضافة CSS للحركات
     const style = document.createElement('style');
     style.textContent = `
         @keyframes fadeIn {
@@ -148,11 +166,13 @@ function showWhiteCard(currentTime) {
     `;
     document.head.appendChild(style);
 
+    // التركيز على الحقل
     setTimeout(() => {
         const input = document.getElementById('white-card-input');
         if (input) input.focus();
     }, 200);
 
+    // مستمعات الأزرار
     document.getElementById('white-card-cancel').addEventListener('click', () => {
         card.remove();
         backdrop.remove();
@@ -162,30 +182,37 @@ function showWhiteCard(currentTime) {
         const input = document.getElementById('white-card-input');
         const description = input.value.trim() || 'بدون وصف';
 
+        // حفظ العلامة
         saveBookmark(currentTime, formattedTime, description);
 
         card.remove();
         backdrop.remove();
-        showToast('تم حفظ العلامة بنجاح!');
+        showToast('✅ تم حفظ العلامة بنجاح!');
     });
 
+    // Enter للحفظ
     document.getElementById('white-card-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             document.getElementById('white-card-save').click();
         }
     });
 
+    // إغلاق عند الضغط على الخلفية
     backdrop.addEventListener('click', () => {
         card.remove();
         backdrop.remove();
     });
 }
 
+// ============================================
+// دالة حفظ العلامة
+// ============================================
 function saveBookmark(currentTime, formattedTime, description) {
     const videoTitle = document.querySelector('h1.ytd-video-primary-info-renderer')?.textContent?.trim() || 'فيديو بدون عنوان';
     const channelName = document.querySelector('#owner #channel-name a')?.textContent?.trim() || 'قناة غير معروفة';
     const videoId = window.location.search.split('v=')[1]?.split('&')[0] || 'unknown';
 
+    // استخدام chrome.storage مباشرة من content script
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         let data = result.yt_bookmarks_data || {};
         let videoData = data[videoId] || {
@@ -208,6 +235,9 @@ function saveBookmark(currentTime, formattedTime, description) {
     });
 }
 
+// ============================================
+// دالة عرض Toast
+// ============================================
 function showToast(message) {
     const toast = document.createElement('div');
     toast.style.cssText = `
@@ -237,6 +267,9 @@ function showToast(message) {
     }, 2500);
 }
 
+// ============================================
+// مراقبة التغييرات وإعادة الحقن
+// ============================================
 const observer = new MutationObserver(() => {
     injectPremiumBookmarkButton();
 });
@@ -247,6 +280,9 @@ observer.observe(document.body, {
 
 setTimeout(injectPremiumBookmarkButton, 1500);
 
+// ============================================
+// مستمع الرسائل من popup
+// ============================================
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const video = document.querySelector('video');
     if (!video) {
@@ -307,6 +343,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
 });
 
+// ============================================
+// دوال مساعدة
+// ============================================
 function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -326,3 +365,4 @@ function convertTimeToSeconds(str) {
     return p[0] || 0;
 }
 
+console.log('✅ Content Script - جاهز!');

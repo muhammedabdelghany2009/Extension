@@ -1,0 +1,161 @@
+:root {
+    --primary-color: #007bff;
+    --danger-color: #dc3545;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #333;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 380px;
+    margin: 0;
+    padding: 15px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.video-title {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.search-box input,
+.loop-inputs input,
+.loop-inputs select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.loop-section {
+    background: #f0f4f8;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.loop-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+}
+
+.loop-inputs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    width: 100%;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    flex: 1;
+}
+
+.btn-secondary-outline {
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+    flex: 1;
+    text-align: center;
+    display: inline-block;
+}
+
+.backup-section {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.markers-list,
+.all-videos-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.markers-list li,
+.all-videos-list li {
+    background: var(--card-bg);
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border-right: 4px solid var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.all-videos-list li {
+    border-right-color: #28a745;
+    cursor: pointer;
+}
+
+.status-msg {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    padding: 10px;
+}
+
+.hidden {
+    display: none !important;
+}

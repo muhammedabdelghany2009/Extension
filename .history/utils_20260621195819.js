@@ -1,3 +1,7 @@
+// ============================================
+// دوال مساعدة عامة
+// ============================================
+
 function generateUniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
 }
@@ -27,3 +31,5 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+console.log('✅ Utils - جاهز!');

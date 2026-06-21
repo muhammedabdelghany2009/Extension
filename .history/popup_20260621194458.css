@@ -8,15 +8,15 @@ body {
     font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f8fafc;
     color: #1e293b;
-    width: 420px;
-    max-height: 650px;
+    width: 400px;
+    max-height: 620px;
     overflow: hidden;
     direction: rtl;
 }
 
 .app-container {
     padding: 16px 18px;
-    max-height: 650px;
+    max-height: 620px;
     overflow-y: auto;
 }
 
@@ -121,7 +121,7 @@ body {
     margin-bottom: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
 }
 
@@ -131,7 +131,6 @@ body {
     background: #22c55e;
     border-radius: 50%;
     flex-shrink: 0;
-    margin-top: 4px;
     animation: pulse 2s infinite;
 }
 
@@ -155,11 +154,9 @@ body {
     color: #1e293b;
     margin: 0;
     flex: 1;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-height: 80px;
-    overflow-y: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .main-action-btn {
@@ -247,7 +244,6 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 12px;
-    flex-wrap: wrap;
 }
 
 .card-icon {
@@ -259,10 +255,6 @@ body {
     font-weight: 600;
     color: #1e293b;
     margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
 }
 
 .badge {
@@ -515,19 +507,13 @@ body {
     margin-bottom: 6px;
 }
 
-.channel-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.channel-logo {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+.channel-logo-badge {
     background: #ef4444;
     color: white;
-    display: flex;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
@@ -535,30 +521,13 @@ body {
     flex-shrink: 0;
 }
 
-.channel-name {
-    font-weight: 700;
-    font-size: 12px;
-    color: #6366f1;
-}
-
-.marker-count-badge {
-    background: #e8f5e9;
-    color: #2e7d32;
-    flex-shrink: 0;
-    font-size: 11px;
-    padding: 3px 12px;
-    border-radius: 12px;
-}
-
 .history-video-title {
     font-weight: 600;
     font-size: 13px;
     color: #1e293b;
-    line-height: 1.6;
+    line-height: 1.5;
     text-align: right;
     padding-right: 36px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .sub-markers-list {
@@ -567,27 +536,15 @@ body {
     border-top: 2px dashed #e2e8f0;
 }
 
-.sub-marker-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
+.sub-markers-list .marker-item {
     background: white;
     margin-bottom: 4px;
     border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.1s ease;
     border: 1px solid #f1f5f9;
 }
 
-.sub-marker-item:hover {
+.sub-markers-list .marker-item:hover {
     background: #f1f5f9 !important;
-}
-
-.sub-marker-item .marker-time {
-    color: #3b82f6;
-    font-weight: bold;
 }
 
 .search-box {
@@ -640,6 +597,130 @@ body {
     padding: 10px;
 }
 
+.custom-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 99999;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.3s ease;
+    direction: rtl;
+    text-align: center;
+    max-width: 90%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.edit-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+.edit-dialog-overlay .dialog-box {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 35px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    direction: rtl;
+    text-align: right;
+    animation: slideUp 0.25s ease;
+}
+
+.edit-dialog-overlay .dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.edit-dialog-overlay .dialog-header h3 {
+    margin: 0;
+    color: #1a1a1a;
+    font-size: 20px;
+}
+
+.edit-dialog-overlay .dialog-sub {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.edit-dialog-overlay input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    font-family: 'Cairo', sans-serif;
+    transition: border 0.2s ease;
+}
+
+.edit-dialog-overlay input:focus {
+    border-color: #3b82f6;
+}
+
+.edit-dialog-overlay .dialog-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.edit-dialog-overlay .dialog-actions .cancel-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    transition: background 0.15s ease;
+}
+
+.edit-dialog-overlay .dialog-actions .cancel-btn:hover {
+    background: #e2e8f0;
+}
+
+.edit-dialog-overlay .dialog-actions .save-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    transition: background 0.15s ease;
+}
+
+.edit-dialog-overlay .dialog-actions .save-btn:hover {
+    background: #2563eb;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -662,3 +743,7 @@ body {
     }
 }
 
+#noVideos.hidden,
+#noMarkers.hidden {
+    display: none !important;
+}

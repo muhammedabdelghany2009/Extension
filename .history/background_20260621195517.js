@@ -1,5 +1,9 @@
+// ============================================
+// Background Service Worker
+// ============================================
+
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('YouTube Bookmarks Pro installed');
+    console.log('📌 YouTube Bookmarks Pro - تم التثبيت بنجاح!');
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -19,3 +23,5 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return true;
     }
 });
+
+console.log('✅ Background Service Worker - جاهز!');

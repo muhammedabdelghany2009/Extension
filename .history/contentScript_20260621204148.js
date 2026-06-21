@@ -325,4 +325,3 @@ function convertTimeToSeconds(str) {
     if (p.length === 3) return (p[0] * 3600) + (p[1] * 60) + p[2];
     return p[0] || 0;
 }
-
