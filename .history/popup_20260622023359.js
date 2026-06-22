@@ -3,7 +3,6 @@ let currentVideoTitle = "فيديو يوتيوب نشط";
 let temporarySeconds = 0;
 let temporaryFormattedTime = "00:00";
 let allBookmarksData = {};
-let isLoopRunning = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('addBookmarkBtn').addEventListener('click', askAndAddNewMarker);
@@ -18,31 +17,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadAllData();
     executeDirectDynamicCheck();
 
-    chrome.runtime.sendMessage({ action: "CHECK_LOOP_STATUS" }, (response) => {
-        if (response && response.isRunning) {
-            isLoopRunning = true;
-            document.getElementById('startLoopBtn').classList.add('hidden');
-            document.getElementById('stopLoopBtn').classList.remove('hidden');
-        }
-    });
-
     chrome.runtime.onMessage.addListener((request) => {
         if (request.action === "TRIGGER_POPUP_ADD") {
             askAndAddNewMarker();
         }
         if (request.action === "LOOP_FINISHED") {
-            isLoopRunning = false;
             document.getElementById('startLoopBtn').classList.remove('hidden');
             document.getElementById('stopLoopBtn').classList.add('hidden');
             showToast(`⏹️ اكتمل التكرار (${request.count} مرات) والفيديو متوقف`);
         }
         if (request.action === "LOOP_STOPPED") {
-            isLoopRunning = false;
             document.getElementById('startLoopBtn').classList.remove('hidden');
             document.getElementById('stopLoopBtn').classList.add('hidden');
         }
         if (request.action === "LOOP_RUNNING") {
-            isLoopRunning = true;
             document.getElementById('startLoopBtn').classList.add('hidden');
             document.getElementById('stopLoopBtn').classList.remove('hidden');
         }
@@ -472,41 +460,36 @@ function searchInSavedVideosHistory(e) {
 function exportStorageToJson() {
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         const data = result.yt_bookmarks_data || {};
-        const currentVideoData = data[currentVideoId];
 
-        if (!currentVideoData || !currentVideoData.markers || currentVideoData.markers.length === 0) {
-            showToast('لا توجد علامات لتصديرها لهذا الفيديو');
-            return;
-        }
+        const formattedData = {};
+        Object.keys(data).forEach(key => {
+            const video = data[key];
+            formattedData[key] = {
+                title: video.title,
+                channel: video.channel || 'قناة يوتيوب',
+                url: video.url || `https://youtube.com/watch?v=${key}`,
+                markers: video.markers.map(m => ({
+                    title: m.title,
+                    time: m.time,
+                    seconds: m.seconds,
+                    created: m.createdAt
+                }))
+            };
+        });
 
-        const exportData = {
-            videoId: currentVideoId,
-            videoTitle: currentVideoTitle,
-            channel: currentVideoData.channel || 'قناة يوتيوب',
-            url: currentVideoData.url || `https://youtube.com/watch?v=${currentVideoId}`,
-            exportedAt: new Date().toISOString(),
-            markers: currentVideoData.markers.map(m => ({
-                title: m.title,
-                time: m.time,
-                seconds: m.seconds,
-                created: m.createdAt
-            }))
-        };
-
-        const jsonString = JSON.stringify(exportData, null, 2);
+        const jsonString = JSON.stringify(formattedData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
         a.href = url;
-        const fileName = currentVideoTitle.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '').trim().slice(0, 50) || 'bookmarks';
-        a.download = `${fileName}_bookmarks.json`;
+        a.download = `YT_Bookmarks_${new Date().toISOString().slice(0, 10)}.json`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
 
-        showToast(`📤 تم تصدير "${currentVideoTitle}" بنجاح!`);
+        showToast('تم تصدير البيانات بنجاح!');
     });
 }
 
@@ -519,85 +502,35 @@ function importStorageFromJson(e) {
         try {
             const importedData = JSON.parse(evt.target.result);
 
-            if (!importedData.markers || !Array.isArray(importedData.markers)) {
-                alert('❌ هذا الملف لا يحتوي على علامات صالحة');
-                return;
-            }
+            const formattedData = {};
+            Object.keys(importedData).forEach(key => {
+                const video = importedData[key];
+                formattedData[key] = {
+                    title: video.title || 'فيديو بدون عنوان',
+                    channel: video.channel || 'قناة يوتيوب',
+                    url: video.url || `https://youtube.com/watch?v=${key}`,
+                    markers: (video.markers || []).map(m => ({
+                        id: generateUniqueId(),
+                        title: m.title || 'بدون وصف',
+                        time: m.time || '00:00',
+                        seconds: m.seconds || 0,
+                        createdAt: m.created || new Date().toISOString()
+                    }))
+                };
+            });
 
-            const isCurrentVideo = importedData.videoId === currentVideoId;
-            const importedVideoTitle = importedData.videoTitle || 'فيديو غير معروف';
-
-            if (isCurrentVideo) {
-                const confirmMsg = `هل تريد استيراد ${importedData.markers.length} علامات للفيديو الحالي "${currentVideoTitle}"؟`;
-                if (confirm(confirmMsg)) {
-                    importMarkersToVideo(importedData, currentVideoId, currentVideoTitle);
-                }
-            } else {
-                const msg = `⚠️ هذا الملف يحتوي على علامات لفيديو آخر:\n\n"${importedVideoTitle}"\n\nعدد العلامات: ${importedData.markers.length}\n\nماذا تريد أن تفعل؟`;
-                const choice = confirm(msg + '\n\nاضغط "موافق" لاستيرادها للفيديو الحالي\nاضغط "إلغاء" للإلغاء');
-
-                if (choice) {
-                    const confirmAgain = confirm(`تأكيد: استيراد علامات "${importedVideoTitle}" إلى الفيديو الحالي "${currentVideoTitle}"؟`);
-                    if (confirmAgain) {
-                        importMarkersToVideo(importedData, currentVideoId, currentVideoTitle);
-                    }
-                }
-            }
+            chrome.storage.local.set({ yt_bookmarks_data: formattedData }, () => {
+                allBookmarksData = formattedData;
+                loadCurrentVideoMarkersFromStorage();
+                refreshAllVideosHistoryList();
+                showToast('تم استيراد البيانات بنجاح!');
+            });
         } catch (err) {
-            alert('❌ الملف غير صالح. تأكد من أنه ملف JSON صحيح.');
+            alert('الملف غير صالح. تأكد من أنه ملف JSON صحيح.');
         }
     };
     reader.readAsText(file);
     e.target.value = '';
-}
-
-function importMarkersToVideo(importedData, targetVideoId, targetVideoTitle) {
-    chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
-        let data = result.yt_bookmarks_data || {};
-
-        if (!data[targetVideoId]) {
-            data[targetVideoId] = {
-                title: targetVideoTitle,
-                channel: importedData.channel || 'قناة يوتيوب',
-                url: `https://youtube.com/watch?v=${targetVideoId}`,
-                markers: []
-            };
-        }
-
-        const existingTimes = new Set(data[targetVideoId].markers.map(m => Math.round(m.seconds)));
-
-        let addedCount = 0;
-        let skippedCount = 0;
-
-        importedData.markers.forEach(m => {
-            const roundedSeconds = Math.round(m.seconds || 0);
-            if (!existingTimes.has(roundedSeconds)) {
-                data[targetVideoId].markers.push({
-                    id: generateUniqueId(),
-                    title: m.title || 'بدون وصف',
-                    time: m.time || formatSecondsToTime(m.seconds || 0),
-                    seconds: m.seconds || 0,
-                    createdAt: m.created || new Date().toISOString()
-                });
-                existingTimes.add(roundedSeconds);
-                addedCount++;
-            } else {
-                skippedCount++;
-            }
-        });
-
-        chrome.storage.local.set({ yt_bookmarks_data: data }, () => {
-            allBookmarksData = data;
-            loadCurrentVideoMarkersFromStorage();
-            refreshAllVideosHistoryList();
-
-            let msg = `✅ تم استيراد ${addedCount} علامة`;
-            if (skippedCount > 0) {
-                msg += ` (تم تخطي ${skippedCount} علامة مكررة)`;
-            }
-            showToast(msg);
-        });
-    });
 }
 
 async function startLoopSequence() {

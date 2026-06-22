@@ -603,16 +603,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         video.currentTime = startSecs;
         video.play();
 
-        chrome.runtime.sendMessage({ action: "LOOP_RUNNING" });
-
         showToast(isInfinite ? '🔄 بدء التكرار المستمر...' : `🔄 بدء التكرار (${maxCount} مرات)`);
 
         loopIntervalTimer = setInterval(() => {
             if (video.currentTime >= endSecs) {
                 if (!isInfinite && counter >= maxCount - 1) {
                     clearInterval(loopIntervalTimer);
-                    video.pause();
-                    showToast(`⏹️ انتهى التكرار (${maxCount} مرات) - الفيديو متوقف`);
+                    showToast(`✅ انتهى التكرار (${maxCount} مرات)`);
 
                     chrome.runtime.sendMessage({
                         action: "LOOP_FINISHED",
@@ -620,7 +617,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     });
                 } else {
                     video.currentTime = startSecs;
-                    video.play();
                     counter++;
                     if (counter % 5 === 0 && !isInfinite) {
                         showToast(`🔄 تم التكرار ${counter} مرات من ${maxCount}`);
@@ -635,8 +631,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     if (request.action === "STOP_LOOP") {
         clearInterval(loopIntervalTimer);
-        video.pause();
-        showToast('⏹️ تم إيقاف التكرار - الفيديو متوقف');
+        showToast('⏹️ تم إيقاف التكرار');
 
         chrome.runtime.sendMessage({
             action: "LOOP_STOPPED"
@@ -674,4 +669,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-

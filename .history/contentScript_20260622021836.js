@@ -64,8 +64,6 @@ function showWhiteCard(currentTime) {
         const markers = videoData?.markers || [];
         const sortedMarkers = [...markers].sort((a, b) => a.seconds - b.seconds);
 
-        const existingMarker = sortedMarkers.find(m => Math.abs(m.seconds - currentTime) < 0.5);
-
         const backdrop = document.createElement('div');
         backdrop.id = 'yt-white-card-backdrop';
         backdrop.style.cssText = `
@@ -75,11 +73,6 @@ function showWhiteCard(currentTime) {
             z-index: 99998;
             animation: fadeIn 0.2s ease;
         `;
-
-        backdrop.addEventListener('click', () => {
-            card.remove();
-            backdrop.remove();
-        });
 
         const card = document.createElement('div');
         card.id = 'yt-custom-white-card';
@@ -93,37 +86,15 @@ function showWhiteCard(currentTime) {
             padding: 30px 35px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.4);
             z-index: 99999;
-            min-width: 420px;
-            max-width: 500px;
-            max-height: 85vh;
+            min-width: 400px;
+            max-width: 480px;
+            max-height: 90vh;
             overflow-y: auto;
             font-family: 'Segoe UI', 'YouTube Sans', Roboto, sans-serif;
             direction: rtl;
             text-align: right;
             animation: slideUp 0.3s ease;
         `;
-
-        let warningHtml = '';
-        if (existingMarker) {
-            warningHtml = `
-                <div style="
-                    background: #fff3cd;
-                    border: 1px solid #ffc107;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    margin-bottom: 12px;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                ">
-                    <span style="font-size:18px;">⚠️</span>
-                    <span style="font-size:13px; color:#856404;">
-                        تم إضافة علامة من قبل في هذا التوقيت: 
-                        <strong>"${escapeHtml(existingMarker.title)}"</strong>
-                    </span>
-                </div>
-            `;
-        }
 
         let markersHtml = '';
         if (sortedMarkers.length > 0) {
@@ -132,9 +103,9 @@ function showWhiteCard(currentTime) {
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <span style="font-size:13px; font-weight:600; color:#666;">العلامات السابقة (${sortedMarkers.length})</span>
                     </div>
-                    <div style="max-height:160px; overflow-y:auto;">
+                    <div style="max-height:150px; overflow-y:auto;">
                         ${sortedMarkers.map(m => `
-                            <div class="prev-marker-item" data-marker-id="${m.id}" data-seconds="${m.seconds}" data-title="${escapeHtml(m.title)}" style="
+                            <div class="prev-marker-item" data-seconds="${m.seconds}" data-title="${escapeHtml(m.title)}" style="
                                 display: flex;
                                 justify-content: space-between;
                                 align-items: center;
@@ -146,11 +117,11 @@ function showWhiteCard(currentTime) {
                                 transition: background 0.1s ease;
                                 font-size: 13px;
                             ">
-                                <span style="display:flex; align-items:center; gap:6px; flex:1; min-width:0; cursor:pointer;" class="marker-click-area">
+                                <span style="display:flex; align-items:center; gap:6px; flex:1; min-width:0;">
                                     <span>📌</span>
-                                    <span style="white-space:normal; word-wrap:break-word; overflow-wrap:break-word; line-height:1.4; max-height:40px; overflow-y:auto;">${escapeHtml(m.title)}</span>
+                                    <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(m.title)}</span>
                                 </span>
-                                <span style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                                <span style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
                                     <span style="color:#3b82f6; font-weight:600; font-family:'Courier New',monospace; font-size:12px;">${m.time}</span>
                                     <button class="reuse-title-btn" data-title="${escapeHtml(m.title)}" style="
                                         background:#fbbf24;
@@ -161,26 +132,6 @@ function showWhiteCard(currentTime) {
                                         font-size:11px;
                                         transition:transform 0.1s ease;
                                     ">↺</button>
-                                    <button class="edit-marker-btn" data-marker-id="${m.id}" data-title="${escapeHtml(m.title)}" style="
-                                        background:#60a5fa;
-                                        border:none;
-                                        border-radius:4px;
-                                        padding:2px 6px;
-                                        cursor:pointer;
-                                        font-size:11px;
-                                        color:white;
-                                        transition:transform 0.1s ease;
-                                    ">✏️</button>
-                                    <button class="delete-marker-btn" data-marker-id="${m.id}" style="
-                                        background:#ef4444;
-                                        border:none;
-                                        border-radius:4px;
-                                        padding:2px 6px;
-                                        cursor:pointer;
-                                        font-size:11px;
-                                        color:white;
-                                        transition:transform 0.1s ease;
-                                    ">🗑️</button>
                                 </span>
                             </div>
                         `).join('')}
@@ -196,9 +147,8 @@ function showWhiteCard(currentTime) {
                 <span style="background:#e8f5e9; color:#2e7d32; padding:4px 16px; border-radius:20px; font-size:18px; font-weight:700; font-family:'Courier New',monospace;">${formattedTime}</span>
                 ${sortedMarkers.length > 0 ? `<span style="background:#e3f2fd; color:#1565c0; padding:2px 12px; border-radius:12px; font-size:12px; font-weight:600;">${sortedMarkers.length} علامات</span>` : ''}
             </div>
-            ${warningHtml}
             <p style="color:#666; font-size:14px; margin:8px 0 12px 0;">وصف أو عنوان اللحظة الحالية</p>
-            <textarea id="white-card-input" placeholder="اكتب وصفاً سريعاً هنا..." style="
+            <input type="text" id="white-card-input" placeholder="اكتب وصفاً سريعاً هنا..." style="
                 width: 100%;
                 padding: 12px 16px;
                 border: 2px solid #e0e0e0;
@@ -209,14 +159,7 @@ function showWhiteCard(currentTime) {
                 margin-bottom: 4px;
                 font-family: inherit;
                 transition: border 0.2s ease;
-                resize: vertical;
-                min-height: 50px;
-                max-height: 120px;
-                line-height: 1.6;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            "></textarea>
+            ">
             ${markersHtml}
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
                 <button id="white-card-cancel" style="
@@ -260,11 +203,8 @@ function showWhiteCard(currentTime) {
             .prev-marker-item:hover {
                 background: #e8e8e8 !important;
             }
-            .reuse-title-btn:hover, .edit-marker-btn:hover, .delete-marker-btn:hover {
+            .reuse-title-btn:hover {
                 transform: scale(1.1);
-            }
-            .marker-click-area {
-                cursor: pointer;
             }
         `;
         document.head.appendChild(style);
@@ -274,10 +214,9 @@ function showWhiteCard(currentTime) {
             if (input) input.focus();
         }, 200);
 
-        document.querySelectorAll('.marker-click-area').forEach(area => {
-            area.addEventListener('click', function () {
-                const parent = this.closest('.prev-marker-item');
-                const seconds = parseFloat(parent.dataset.seconds);
+        document.querySelectorAll('.prev-marker-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const seconds = parseFloat(this.dataset.seconds);
                 const video = document.querySelector('video');
                 if (video) {
                     video.currentTime = seconds;
@@ -299,27 +238,6 @@ function showWhiteCard(currentTime) {
             });
         });
 
-        document.querySelectorAll('.edit-marker-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const markerId = this.dataset.markerId;
-                const currentTitle = this.dataset.title;
-                showEditMarkerDialog(markerId, currentTitle);
-            });
-        });
-
-        document.querySelectorAll('.delete-marker-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                const markerId = this.dataset.markerId;
-                if (confirm('هل أنت متأكد من حذف هذه العلامة؟')) {
-                    deleteMarkerFromVideo(markerId, videoId, () => {
-                        showWhiteCard(currentTime);
-                    });
-                }
-            });
-        });
-
         document.getElementById('white-card-cancel').addEventListener('click', () => {
             card.remove();
             backdrop.remove();
@@ -329,164 +247,29 @@ function showWhiteCard(currentTime) {
             const input = document.getElementById('white-card-input');
             const description = input.value.trim() || 'بدون وصف';
 
-            const existing = sortedMarkers.find(m => Math.abs(m.seconds - currentTime) < 0.5);
-            if (existing) {
-                showToast(`⚠️ تم إضافة علامة من قبل في هذا التوقيت: "${existing.title}"`);
-                return;
-            }
-
             saveBookmark(currentTime, formattedTime, description);
+
             showToast('تم حفظ العلامة بنجاح!');
-            showWhiteCard(currentTime);
+
+            const newCard = document.getElementById('yt-custom-white-card');
+            if (newCard) {
+                const currentFormatted = document.querySelector('#yt-custom-white-card .badge')?.textContent || formattedTime;
+                showWhiteCard(currentTime);
+            } else {
+                card.remove();
+                backdrop.remove();
+            }
         });
 
         document.getElementById('white-card-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
+            if (e.key === 'Enter') {
                 document.getElementById('white-card-save').click();
             }
         });
 
-        document.addEventListener('click', function outsideClick(e) {
-            if (card && !card.contains(e.target) && !backdrop.contains(e.target)) {
-                card.remove();
-                backdrop.remove();
-                document.removeEventListener('click', outsideClick);
-            }
-        });
-    });
-}
-
-function showEditMarkerDialog(markerId, currentTitle) {
-    const overlay = document.createElement('div');
-    overlay.className = 'edit-dialog-overlay';
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: fadeIn 0.2s ease;
-        backdrop-filter: blur(4px);
-    `;
-
-    overlay.innerHTML = `
-        <div style="
-            background: white;
-            border-radius: 20px;
-            padding: 30px 35px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            direction: rtl;
-            text-align: right;
-            animation: slideUp 0.25s ease;
-        ">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                <span style="font-size:24px;">✏️</span>
-                <h3 style="margin:0; color:#1a1a1a; font-size:20px;">تعديل العلامة</h3>
-            </div>
-            <p style="color:#64748b; font-size:13px; margin-bottom:18px;">قم بتعديل وصف العلامة المرجعية</p>
-            <input type="text" id="editMarkerInput" value="${escapeHtml(currentTitle)}" style="
-                width: 100%;
-                padding: 14px 16px;
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
-                font-size: 15px;
-                outline: none;
-                box-sizing: border-box;
-                margin-bottom: 20px;
-                font-family: 'Segoe UI', sans-serif;
-                transition: border 0.2s ease;
-            ">
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button id="editCancelBtn" style="
-                    padding: 10px 24px;
-                    border: none;
-                    border-radius: 10px;
-                    background: #f1f5f9;
-                    color: #475569;
-                    cursor: pointer;
-                    font-weight: 600;
-                    font-size: 14px;
-                    transition: background 0.15s ease;
-                ">إلغاء</button>
-                <button id="editSaveBtn" style="
-                    padding: 10px 24px;
-                    border: none;
-                    border-radius: 10px;
-                    background: #3b82f6;
-                    color: white;
-                    cursor: pointer;
-                    font-weight: 600;
-                    font-size: 14px;
-                    transition: background 0.15s ease;
-                ">💾 حفظ التعديل</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    setTimeout(() => {
-        const input = document.getElementById('editMarkerInput');
-        if (input) { input.focus(); input.select(); }
-    }, 150);
-
-    document.getElementById('editCancelBtn').addEventListener('click', () => overlay.remove());
-    document.getElementById('editSaveBtn').addEventListener('click', () => {
-        const newTitle = document.getElementById('editMarkerInput').value.trim();
-        if (!newTitle) {
-            showToast('الرجاء إدخال وصف صحيح');
-            return;
-        }
-        const videoId = window.location.search.split('v=')[1]?.split('&')[0] || 'unknown';
-        updateMarkerTitleInStorage(markerId, newTitle, videoId, () => {
-            overlay.remove();
-            const video = document.querySelector('video');
-            if (video) showWhiteCard(video.currentTime);
-        });
-    });
-    document.getElementById('editMarkerInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') document.getElementById('editSaveBtn').click();
-    });
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.remove();
-    });
-}
-
-function updateMarkerTitleInStorage(markerId, newTitle, videoId, callback) {
-    chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
-        let data = result.yt_bookmarks_data || {};
-        let videoData = data[videoId];
-        if (!videoData) return;
-
-        const markerIndex = videoData.markers.findIndex(m => m.id === markerId);
-        if (markerIndex === -1) return;
-
-        videoData.markers[markerIndex].title = newTitle;
-        chrome.storage.local.set({ yt_bookmarks_data: data }, () => {
-            if (callback) callback();
-        });
-    });
-}
-
-function deleteMarkerFromVideo(markerId, videoId, callback) {
-    chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
-        let data = result.yt_bookmarks_data || {};
-        let videoData = data[videoId];
-        if (!videoData) return;
-
-        videoData.markers = videoData.markers.filter(m => m.id !== markerId);
-
-        if (videoData.markers.length === 0) {
-            delete data[videoId];
-        }
-
-        chrome.storage.local.set({ yt_bookmarks_data: data }, () => {
-            if (callback) callback();
+        backdrop.addEventListener('click', () => {
+            card.remove();
+            backdrop.remove();
         });
     });
 }
@@ -542,7 +325,6 @@ function showToast(message) {
         text-align: center;
         border: 1px solid rgba(255,255,255,0.1);
         pointer-events: none;
-        max-width: 80%;
     `;
     toast.textContent = message;
     document.body.appendChild(toast);
@@ -551,7 +333,7 @@ function showToast(message) {
         toast.style.opacity = '0';
         toast.style.transition = 'opacity 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    }, 3000);
 }
 
 const observer = new MutationObserver(() => {
@@ -603,16 +385,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         video.currentTime = startSecs;
         video.play();
 
-        chrome.runtime.sendMessage({ action: "LOOP_RUNNING" });
-
         showToast(isInfinite ? '🔄 بدء التكرار المستمر...' : `🔄 بدء التكرار (${maxCount} مرات)`);
 
         loopIntervalTimer = setInterval(() => {
             if (video.currentTime >= endSecs) {
                 if (!isInfinite && counter >= maxCount - 1) {
                     clearInterval(loopIntervalTimer);
-                    video.pause();
-                    showToast(`⏹️ انتهى التكرار (${maxCount} مرات) - الفيديو متوقف`);
+                    showToast(`✅ انتهى التكرار (${maxCount} مرات)`);
 
                     chrome.runtime.sendMessage({
                         action: "LOOP_FINISHED",
@@ -620,7 +399,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     });
                 } else {
                     video.currentTime = startSecs;
-                    video.play();
                     counter++;
                     if (counter % 5 === 0 && !isInfinite) {
                         showToast(`🔄 تم التكرار ${counter} مرات من ${maxCount}`);
@@ -635,8 +413,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     if (request.action === "STOP_LOOP") {
         clearInterval(loopIntervalTimer);
-        video.pause();
-        showToast('⏹️ تم إيقاف التكرار - الفيديو متوقف');
+        showToast('⏹️ تم إيقاف التكرار');
 
         chrome.runtime.sendMessage({
             action: "LOOP_STOPPED"
@@ -674,4 +451,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-

@@ -1,5 +1,3 @@
-let isLoopRunning = false;
-
 chrome.runtime.onInstalled.addListener(() => {
     console.log('YouTube Bookmarks Pro installed');
 });
@@ -20,22 +18,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         return true;
     }
-
-    if (request.action === "LOOP_RUNNING") {
-        isLoopRunning = true;
-        sendResponse({ success: true });
-        return true;
-    }
-
-    if (request.action === "LOOP_STOPPED" || request.action === "LOOP_FINISHED") {
-        isLoopRunning = false;
-        sendResponse({ success: true });
-        return true;
-    }
-
-    if (request.action === "CHECK_LOOP_STATUS") {
-        sendResponse({ isRunning: isLoopRunning });
-        return true;
-    }
 });
-
