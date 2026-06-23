@@ -22,7 +22,7 @@ Add the extension
 
 Then make sure to add it to the top and pin it.
 
-(screenshots\Screenshot (132).png)
+(screenshots\Screenshot%20(132).png)
 
 
 ## How to use
