@@ -18,11 +18,11 @@ Select Extensions
 Type YouTube Bookmarks Pro in the search
 Add the extension
 
-assets\screenshots\Screenshot (129).png
+(screenshots\Screenshot (129).png)
 
 Then make sure to add it to the top and pin it.
 
-assets\screenshots\Screenshot (132).png
+(screenshots\Screenshot (132).png)
 
 
 ## How to use
@@ -31,7 +31,7 @@ After installing you'll find it next to the YouTube link in the address bar
 
 Click the icon to open the extension
 
-assets\screenshots\Screenshot (130).png
+(screenshots\Screenshot (130).png)
 
 
 
@@ -48,7 +48,7 @@ Enter a description for the bookmark
 
 Click save
 
-assets\screenshots\Screenshot (131).png
+(screenshots\Screenshot (131).png)
 
 
 ## Extension features
@@ -64,14 +64,14 @@ Loop a specific scene (A-B Loop)
 Export all data as JSON file
 Import data from JSON file
 
-assets\screenshots\Screenshot (119).png
+(screenshots\Screenshot (119).png)
 
-assets\screenshots\Screenshot (121).png
+(screenshots\Screenshot (121).png)
 
 
 There is also a history list where you can find all the video tags you have saved under the channel name and video name.
 
-assets\screenshots\Screenshot (120).png
+(screenshots\Screenshot (120).png)
 
 
 ## Important warnings
@@ -80,9 +80,9 @@ The extension only works on YouTube
 Won't work if you're not on a video (you'll see a warning message)
 You must be on a video to save a bookmark
 
-assets\screenshots\Screenshot (122).png
+(screenshots\Screenshot (122).png)
 
-assets\screenshots\Screenshot (123).png
+(screenshots\Screenshot (123).png)
 
 
 ## For developers
