@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
@@ -16,34 +16,34 @@
 
         <div id="errorScreen" class="error-container hidden">
             <div class="error-icon">⚠️</div>
-            <h4>من فضلك حدد فيديو فقط 📺</h4>
+            <h4>Please open a YouTube video first 📺</h4>
             <p></p>
-            <a href="https://youtube.com" target="_blank" class="btn btn-gradient text-center hidden">الانتقال إلى منصة
-                يوتيوب 🚀</a>
+            <a href="https://youtube.com" target="_blank" class="btn btn-gradient text-center hidden">Go to YouTube
+                🚀</a>
         </div>
 
         <div id="mainContent">
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="current-video">
-                    <span class="tab-icon">📺</span> الفيديو الحالي
+                    <span class="tab-icon">📺</span> Current Video
                 </button>
                 <button class="tab-btn" data-tab="all-videos">
-                    <span class="tab-icon">🗂️</span> المحفوظات
+                    <span class="tab-icon">🗂️</span> Saved
                 </button>
             </div>
 
             <div id="current-video" class="tab-content active">
                 <div class="video-info-card">
                     <div class="pulse-indicator"></div>
-                    <h3 id="videoTitle" class="video-title">جاري الفحص المباشر...</h3>
+                    <h3 id="videoTitle" class="video-title">Checking video...</h3>
                 </div>
 
                 <div class="add-bookmark-section">
                     <button id="addBookmarkBtn" class="main-action-btn">
                         <div class="icon-circle">📌</div>
                         <div class="btn-text">
-                            <span class="primary-text">إضافة علامة مرجعية جديدة</span>
-                            <span class="secondary-text">حفظ التوقيت الحالي تلقائيًا</span>
+                            <span class="primary-text">Add New Bookmark</span>
+                            <span class="secondary-text">Save current timestamp automatically</span>
                         </div>
                     </button>
                 </div>
@@ -51,63 +51,63 @@
                 <div id="quickAddContainer" class="modern-card quick-add-card hidden">
                     <div class="card-header">
                         <span class="card-icon">⏱️</span>
-                        <h4>حفظ علامة عند توقيت: <span id="capturedTimeBadge" class="badge">00:00</span></h4>
+                        <h4>Save bookmark at: <span id="capturedTimeBadge" class="badge">00:00</span></h4>
                     </div>
                     <div class="input-wrapper">
-                        <label>وصف أو عنوان اللحظة الحالية</label>
-                        <input type="text" id="customMarkerTitleInput" placeholder="اكتب وصفاً سريعاً هنا...">
+                        <label>Description or title for this moment</label>
+                        <input type="text" id="customMarkerTitleInput" placeholder="Write a quick description...">
                     </div>
                     <div class="loop-actions">
-                        <button id="saveCustomMarkerBtn" class="btn btn-gradient" style="flex: 2;">حفظ الآن 💾</button>
-                        <button id="cancelCustomMarkerBtn" class="btn btn-outline" style="flex: 1;">إلغاء</button>
+                        <button id="saveCustomMarkerBtn" class="btn btn-gradient" style="flex: 2;">Save Now 💾</button>
+                        <button id="cancelCustomMarkerBtn" class="btn btn-outline" style="flex: 1;">Cancel</button>
                     </div>
                 </div>
 
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchMarker" placeholder="ابحث في علامات هذا الفيديو...">
+                    <input type="text" id="searchMarker" placeholder="Search bookmarks in this video...">
                 </div>
 
                 <div class="modern-card loop-card">
                     <div class="card-header">
                         <span class="card-icon">🔄</span>
-                        <h4>تكرار لقطة معينة (A-B Loop)</h4>
+                        <h4>Repeat a scene (A-B Loop)</h4>
                     </div>
                     <div class="loop-grid">
                         <div class="input-wrapper">
-                            <label>من (ثواني أو د:ث)</label>
+                            <label>From (seconds or m:s)</label>
                             <input type="text" id="loopFrom" placeholder="0:00">
                         </div>
                         <div class="input-wrapper">
-                            <label>إلى (ثواني أو د:ث)</label>
+                            <label>To (seconds or m:s)</label>
                             <input type="text" id="loopTo" placeholder="1:30">
                         </div>
                         <div class="input-wrapper full-width">
-                            <label>مرات التكرار</label>
+                            <label>Repeat count</label>
                             <select id="loopCount">
-                                <option value="1">مرة واحدة</option>
-                                <option value="2">مرتين</option>
-                                <option value="3">3 مرات</option>
-                                <option value="5">5 مرات</option>
-                                <option value="10">10 مرات</option>
-                                <option value="infinite" selected>بلا نهاية ∞</option>
+                                <option value="1">Once</option>
+                                <option value="2">Twice</option>
+                                <option value="3">3 times</option>
+                                <option value="5">5 times</option>
+                                <option value="10">10 times</option>
+                                <option value="infinite" selected>Infinite ∞</option>
                             </select>
                         </div>
                     </div>
                     <div class="loop-actions">
-                        <button id="startLoopBtn" class="btn btn-gradient">تفعيل التكرار</button>
-                        <button id="stopLoopBtn" class="btn btn-danger hidden">إيقاف التكرار</button>
+                        <button id="startLoopBtn" class="btn btn-gradient">Start Loop</button>
+                        <button id="stopLoopBtn" class="btn btn-danger hidden">Stop Loop</button>
                     </div>
                 </div>
 
-                <div class="section-title">العلامات المسجلة لهذا الفيديو</div>
+                <div class="section-title">Bookmarks for this video</div>
                 <div class="markers-scroll-container">
                     <ul id="markersList" class="modern-list"></ul>
                 </div>
 
                 <div class="backup-grid">
-                    <button id="exportBtn" class="btn btn-outline">📥 تصدير البيانات</button>
-                    <label for="importFile" class="btn btn-outline text-center">📤 استيراد ملف</label>
+                    <button id="exportBtn" class="btn btn-outline">📥 Export Data</button>
+                    <label for="importFile" class="btn btn-outline text-center">📤 Import File</label>
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                 </div>
             </div>
@@ -115,9 +115,9 @@
             <div id="all-videos" class="tab-content">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchSavedVideos" placeholder="ابحث باسم الفيديو المحفوظ...">
+                    <input type="text" id="searchSavedVideos" placeholder="Search saved videos...">
                 </div>
-                <div class="section-title">الفيديوهات التي تمتلك علامات</div>
+                <div class="section-title">Videos with bookmarks</div>
                 <div class="markers-scroll-container">
                     <ul id="allVideosList" class="modern-list video-history-list"></ul>
                 </div>

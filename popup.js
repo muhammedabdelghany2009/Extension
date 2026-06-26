@@ -1,5 +1,5 @@
 let currentVideoId = "default_video";
-let currentVideoTitle = "فيديو يوتيوب نشط";
+let currentVideoTitle = "Active YouTube Video";
 let temporarySeconds = 0;
 let temporaryFormattedTime = "00:00";
 let allBookmarksData = {};
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             isLoopRunning = false;
             document.getElementById('startLoopBtn').classList.remove('hidden');
             document.getElementById('stopLoopBtn').classList.add('hidden');
-            showToast(`⏹️ اكتمل التكرار (${request.count} مرات) والفيديو متوقف`);
+            showToast(`⏹️ Loop completed (${request.count} times) — video paused`);
         }
         if (request.action === "LOOP_STOPPED") {
             isLoopRunning = false;
@@ -72,19 +72,19 @@ async function executeDirectDynamicCheck() {
     if (pageUrl !== "" && !pageUrl.includes("youtube.com") && !pageUrl.includes("youtu.be")) {
         mainContent.classList.add('hidden');
         errorScreen.classList.remove('hidden');
-        errorTitle.textContent = "عذرًا، أنت لست داخل يوتيوب!";
+        errorTitle.textContent = "You're not on YouTube!";
         errorBtn.classList.remove('hidden');
-        errorBtn.textContent = "الانتقال إلى منصة يوتيوب 🚀";
+        errorBtn.textContent = "Go to YouTube 🚀";
         errorBtn.href = "https://youtube.com";
         return;
     }
 
-    const isMainOrSearchPage = pageTitle === "YouTube" || pageTitle.includes("الصفحة الرئيسية") || pageTitle.includes("Search") || (!pageUrl.includes("watch") && !pageUrl.includes("shorts"));
+    const isMainOrSearchPage = pageTitle === "YouTube" || pageTitle.includes("Home") || pageTitle.includes("Search") || (!pageUrl.includes("watch") && !pageUrl.includes("shorts"));
 
     if (isMainOrSearchPage) {
         mainContent.classList.add('hidden');
         errorScreen.classList.remove('hidden');
-        errorTitle.textContent = "من فضلك حدد فيديو فقط 📺";
+        errorTitle.textContent = "Please open a YouTube video first 📺";
         errorText.textContent = "";
         errorBtn.classList.add('hidden');
         return;
@@ -134,16 +134,16 @@ async function askAndAddNewMarker() {
 
             const existingMarker = markers.find(m => Math.abs(m.seconds - temporarySeconds) < 0.5);
             if (existingMarker) {
-                inputField.placeholder = `⚠️ علامة موجودة: "${existingMarker.title}"`;
+                inputField.placeholder = `⚠️ Existing bookmark: "${existingMarker.title}"`;
                 inputField.style.borderColor = '#ffc107';
                 inputField.style.background = '#fff3cd';
             } else if (markers.length > 0) {
                 const lastMarker = markers[markers.length - 1];
-                inputField.placeholder = `آخر وصف: "${lastMarker.title}"`;
+                inputField.placeholder = `Last description: "${lastMarker.title}"`;
                 inputField.style.borderColor = '';
                 inputField.style.background = '';
             } else {
-                inputField.placeholder = "اكتب وصفاً سريعاً هنا...";
+                inputField.placeholder = "Write a quick description...";
                 inputField.style.borderColor = '';
                 inputField.style.background = '';
             }
@@ -187,7 +187,7 @@ function saveCustomMarkerFromInlineForm() {
 
         const existingMarker = markers.find(m => Math.abs(m.seconds - temporarySeconds) < 0.5);
         if (existingMarker) {
-            showToast(`⚠️ تم إضافة علامة من قبل في هذا التوقيت: "${existingMarker.title}"`);
+            showToast(`⚠️ A bookmark already exists at this timestamp: "${existingMarker.title}"`);
             return;
         }
 
@@ -206,7 +206,7 @@ function saveBookmarkToStorage(videoId, videoTitle, markerTitle, formattedTime, 
         if (!data[videoId]) {
             data[videoId] = {
                 title: videoTitle,
-                channel: 'قناة يوتيوب',
+                channel: 'YouTube Channel',
                 url: `https://youtube.com/watch?v=${videoId}`,
                 markers: []
             };
@@ -224,7 +224,7 @@ function saveBookmarkToStorage(videoId, videoTitle, markerTitle, formattedTime, 
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم حفظ العلامة بنجاح!');
+            showToast('Bookmark saved successfully!');
         });
     });
 }
@@ -241,8 +241,8 @@ function loadCurrentVideoMarkersFromStorage() {
             list.innerHTML = `
                 <div class="status-empty-msg">
                     <div style="font-size:40px; margin-bottom:10px;">📭</div>
-                    <p>لا توجد علامات بعد</p>
-                    <p style="font-size:12px; color:#cbd5e1;">اضغط على الزر في الأعلى لحفظ أول علامة</p>
+                    <p>No bookmarks yet</p>
+                    <p style="font-size:12px; color:#cbd5e1;">Press the button at the top to save the first bookmark</p>
                 </div>
             `;
             return;
@@ -280,7 +280,7 @@ function loadCurrentVideoMarkersFromStorage() {
             const editBtn = document.createElement('button');
             editBtn.className = 'edit-btn';
             editBtn.innerHTML = '✏️';
-            editBtn.title = 'تعديل';
+            editBtn.title = 'Edit';
             editBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 showEditDialog(marker.id, marker.title);
@@ -289,7 +289,7 @@ function loadCurrentVideoMarkersFromStorage() {
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.innerHTML = '🗑️';
-            deleteBtn.title = 'حذف';
+            deleteBtn.title = 'Delete';
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 deleteMarker(marker.id);
@@ -311,13 +311,13 @@ function showEditDialog(markerId, currentTitle) {
         <div class="dialog-box">
             <div class="dialog-header">
                 <span style="font-size:24px;">✏️</span>
-                <h3>تعديل العلامة</h3>
+                <h3>Edit bookmark</h3>
             </div>
-            <p class="dialog-sub">قم بتعديل وصف العلامة المرجعية</p>
+            <p class="dialog-sub">Edit the bookmark description.</p>
             <input type="text" id="editMarkerInput" value="${escapeHtml(currentTitle)}">
             <div class="dialog-actions">
-                <button class="cancel-btn" id="editCancelBtn">إلغاء</button>
-                <button class="save-btn" id="editSaveBtn">💾 حفظ التعديل</button>
+                <button class="cancel-btn" id="editCancelBtn">cancel</button>
+                <button class="save-btn" id="editSaveBtn">💾 save </button>
             </div>
         </div>
     `;
@@ -332,7 +332,7 @@ function showEditDialog(markerId, currentTitle) {
     document.getElementById('editSaveBtn').addEventListener('click', () => {
         const newTitle = document.getElementById('editMarkerInput').value.trim();
         if (!newTitle) {
-            showToast('الرجاء إدخال وصف صحيح');
+            showToast('Please enter a correct description');
             return;
         }
         updateMarkerTitle(markerId, newTitle);
@@ -360,13 +360,13 @@ function updateMarkerTitle(markerId, newTitle) {
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم تحديث الوصف بنجاح!');
+            showToast('The description has been successfully updated.');
         });
     });
 }
 
 function deleteMarker(markerId) {
-    if (!confirm('هل أنت متأكد من حذف هذه العلامة؟')) return;
+    if (!confirm('Are you sure you want to delete this bookmark?')) return;
 
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
         let data = result.yt_bookmarks_data || {};
@@ -383,7 +383,7 @@ function deleteMarker(markerId) {
             allBookmarksData = data;
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
-            showToast('تم حذف العلامة بنجاح!');
+            showToast('This bookmark has been successfully deleted');
         });
     });
 }
@@ -400,7 +400,7 @@ function refreshAllVideosHistoryList() {
             historyList.innerHTML = `
                 <div class="status-empty-msg">
                     <div style="font-size:48px; margin-bottom:12px;">📭</div>
-                    <p>لا توجد فيديوهات محفوظة</p>
+                    <p>No saved videos</p>
                 </div>
             `;
             return;
@@ -414,9 +414,9 @@ function refreshAllVideosHistoryList() {
                     <div class="video-row-header">
                         <div class="channel-info">
                             <div class="channel-logo">YT</div>
-                            <span class="channel-name">${escapeHtml(videoData.channel || 'قناة يوتيوب')}</span>
+                            <span class="channel-name">${escapeHtml(videoData.channel || 'YouTube Channel')}</span>
                         </div>
-                        <span class="marker-count-badge">${videoData.markers.length} علامات</span>
+                        <span class="marker-count-badge">${videoData.markers.length}bookmarks</span>
                     </div>
                     <div class="history-video-title">${escapeHtml(videoData.title)}</div>
                     <div class="sub-markers-list hidden"></div>
@@ -475,14 +475,14 @@ function exportStorageToJson() {
         const currentVideoData = data[currentVideoId];
 
         if (!currentVideoData || !currentVideoData.markers || currentVideoData.markers.length === 0) {
-            showToast('لا توجد علامات لتصديرها لهذا الفيديو');
+            showToast('There are no bookmarks for exporting this video.');
             return;
         }
 
         const exportData = {
             videoId: currentVideoId,
             videoTitle: currentVideoTitle,
-            channel: currentVideoData.channel || 'قناة يوتيوب',
+            channel: currentVideoData.channel || 'YouTube Channel',
             url: currentVideoData.url || `https://youtube.com/watch?v=${currentVideoId}`,
             exportedAt: new Date().toISOString(),
             markers: currentVideoData.markers.map(m => ({
@@ -506,7 +506,7 @@ function exportStorageToJson() {
         a.remove();
         URL.revokeObjectURL(url);
 
-        showToast(`📤 تم تصدير "${currentVideoTitle}" بنجاح!`);
+        showToast(`📤 "${currentVideoTitle}" has been exported successfully!`);
     });
 }
 
@@ -520,31 +520,31 @@ function importStorageFromJson(e) {
             const importedData = JSON.parse(evt.target.result);
 
             if (!importedData.markers || !Array.isArray(importedData.markers)) {
-                alert('❌ هذا الملف لا يحتوي على علامات صالحة');
+                alert('❌ This file does not contain valid markers;');
                 return;
             }
 
             const isCurrentVideo = importedData.videoId === currentVideoId;
-            const importedVideoTitle = importedData.videoTitle || 'فيديو غير معروف';
+            const importedVideoTitle = importedData.videoTitle || 'Unknown Video';
 
             if (isCurrentVideo) {
-                const confirmMsg = `هل تريد استيراد ${importedData.markers.length} علامات للفيديو الحالي "${currentVideoTitle}"؟`;
+                const confirmMsg = `Do you want to import ${importedData.markers.length} markers for the current video "${currentVideoTitle}"?`;
                 if (confirm(confirmMsg)) {
                     importMarkersToVideo(importedData, currentVideoId, currentVideoTitle);
                 }
             } else {
-                const msg = `⚠️ هذا الملف يحتوي على علامات لفيديو آخر:\n\n"${importedVideoTitle}"\n\nعدد العلامات: ${importedData.markers.length}\n\nماذا تريد أن تفعل؟`;
-                const choice = confirm(msg + '\n\nاضغط "موافق" لاستيرادها للفيديو الحالي\nاضغط "إلغاء" للإلغاء');
+                const msg = `⚠️ This file contains markers for another video:\n\nVideo: "${importedVideoTitle}"\nNumber of markers: ${importedData.markers.length}\n\nWhat do you want to do?`;
+                const choice = confirm(msg + '\n\nClick "OK" to import them anyway for the current video, or "Cancel" to abort;');
 
                 if (choice) {
-                    const confirmAgain = confirm(`تأكيد: استيراد علامات "${importedVideoTitle}" إلى الفيديو الحالي "${currentVideoTitle}"؟`);
+                    const confirmAgain = confirm(`Confirmation: Import markers from "${importedVideoTitle}" to the current video "${currentVideoTitle}"?`);
                     if (confirmAgain) {
                         importMarkersToVideo(importedData, currentVideoId, currentVideoTitle);
                     }
                 }
             }
         } catch (err) {
-            alert('❌ الملف غير صالح. تأكد من أنه ملف JSON صحيح.');
+            alert('❌ Invalid JSON file. Please make sure it is a valid file;');
         }
     };
     reader.readAsText(file);
@@ -558,7 +558,7 @@ function importMarkersToVideo(importedData, targetVideoId, targetVideoTitle) {
         if (!data[targetVideoId]) {
             data[targetVideoId] = {
                 title: targetVideoTitle,
-                channel: importedData.channel || 'قناة يوتيوب',
+                channel: importedData.channel || 'YouTube Channel',
                 url: `https://youtube.com/watch?v=${targetVideoId}`,
                 markers: []
             };
@@ -574,7 +574,7 @@ function importMarkersToVideo(importedData, targetVideoId, targetVideoTitle) {
             if (!existingTimes.has(roundedSeconds)) {
                 data[targetVideoId].markers.push({
                     id: generateUniqueId(),
-                    title: m.title || 'بدون وصف',
+                    title: m.title || 'No description',
                     time: m.time || formatSecondsToTime(m.seconds || 0),
                     seconds: m.seconds || 0,
                     createdAt: m.created || new Date().toISOString()
@@ -591,9 +591,9 @@ function importMarkersToVideo(importedData, targetVideoId, targetVideoTitle) {
             loadCurrentVideoMarkersFromStorage();
             refreshAllVideosHistoryList();
 
-            let msg = `✅ تم استيراد ${addedCount} علامة`;
+            let msg = `✅ Imported ${addedCount} bookmark`;
             if (skippedCount > 0) {
-                msg += ` (تم تخطي ${skippedCount} علامة مكررة)`;
+                msg += ` (skipped ${skippedCount} The bookmark is duplicate.)`;
             }
             showToast(msg);
         });
@@ -606,7 +606,7 @@ async function startLoopSequence() {
     const count = document.getElementById('loopCount').value;
 
     if (!from || !to) {
-        showToast('فضلاً أدخل نطاق الوقت!');
+        showToast('Please enter a time range!');
         return;
     }
 

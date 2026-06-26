@@ -7,7 +7,7 @@ function injectPremiumBookmarkButton() {
         const quickBtn = document.createElement('button');
         quickBtn.id = 'yt-bookmarks-quick-btn';
         quickBtn.className = 'ytp-button';
-        quickBtn.title = '📌 حفظ علامة مرجعية';
+        quickBtn.title = '📌 Save Bookmark';
         quickBtn.style.cssText = `
             display: inline-flex; 
             align-items: center; 
@@ -38,7 +38,7 @@ function injectPremiumBookmarkButton() {
 
             const videoElement = document.querySelector('video');
             if (!videoElement) {
-                alert('لم يتم العثور على مشغل الفيديو!');
+                alert('Video player not found!');
                 return;
             }
 
@@ -118,7 +118,7 @@ function showWhiteCard(currentTime) {
                 ">
                     <span style="font-size:18px;">⚠️</span>
                     <span style="font-size:13px; color:#856404;">
-                        تم إضافة علامة من قبل في هذا التوقيت: 
+                        A bookmark already exists at this timestamp: 
                         <strong>"${escapeHtml(existingMarker.title)}"</strong>
                     </span>
                 </div>
@@ -130,7 +130,7 @@ function showWhiteCard(currentTime) {
             markersHtml = `
                 <div style="margin-top:14px; padding-top:12px; border-top:2px solid #e8e8e8;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="font-size:13px; font-weight:600; color:#666;">العلامات السابقة (${sortedMarkers.length})</span>
+                        <span style="font-size:13px; font-weight:600; color:#666;">Previous bookmarks (${sortedMarkers.length})</span>
                     </div>
                     <div style="max-height:160px; overflow-y:auto;">
                         ${sortedMarkers.map(m => `
@@ -192,13 +192,13 @@ function showWhiteCard(currentTime) {
         card.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap;">
                 <span style="font-size:24px;">📌</span>
-                <h3 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:600;">حفظ علامة عند توقيت:</h3>
+                <h3 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:600;">Save bookmark at:</h3>
                 <span style="background:#e8f5e9; color:#2e7d32; padding:4px 16px; border-radius:20px; font-size:18px; font-weight:700; font-family:'Courier New',monospace;">${formattedTime}</span>
-                ${sortedMarkers.length > 0 ? `<span style="background:#e3f2fd; color:#1565c0; padding:2px 12px; border-radius:12px; font-size:12px; font-weight:600;">${sortedMarkers.length} علامات</span>` : ''}
+                ${sortedMarkers.length > 0 ? `<span style="background:#e3f2fd; color:#1565c0; padding:2px 12px; border-radius:12px; font-size:12px; font-weight:600;">${sortedMarkers.length} bookmarks</span>` : ''}
             </div>
             ${warningHtml}
-            <p style="color:#666; font-size:14px; margin:8px 0 12px 0;">وصف أو عنوان اللحظة الحالية</p>
-            <textarea id="white-card-input" placeholder="اكتب وصفاً سريعاً هنا..." style="
+            <p style="color:#666; font-size:14px; margin:8px 0 12px 0;">Description for this moment</p>
+            <textarea id="white-card-input" placeholder="Write a quick description here ..." style="
                 width: 100%;
                 padding: 12px 16px;
                 border: 2px solid #e0e0e0;
@@ -229,7 +229,7 @@ function showWhiteCard(currentTime) {
                     font-weight: 600;
                     font-size: 14px;
                     transition: background 0.15s ease;
-                ">إلغاء</button>
+                ">Cancel</button>
                 <button id="white-card-save" style="
                     padding: 10px 24px;
                     border: none;
@@ -240,7 +240,7 @@ function showWhiteCard(currentTime) {
                     font-weight: 600;
                     font-size: 14px;
                     transition: background 0.15s ease;
-                ">💾 حفظ الآن</button>
+                ">💾 Save الآن</button>
             </div>
         `;
 
@@ -312,7 +312,7 @@ function showWhiteCard(currentTime) {
             btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const markerId = this.dataset.markerId;
-                if (confirm('هل أنت متأكد من حذف هذه العلامة؟')) {
+                if (confirm('Are you sure this tag was successfully removed?')) {
                     deleteMarkerFromVideo(markerId, videoId, () => {
                         showWhiteCard(currentTime);
                     });
@@ -327,16 +327,16 @@ function showWhiteCard(currentTime) {
 
         document.getElementById('white-card-save').addEventListener('click', () => {
             const input = document.getElementById('white-card-input');
-            const description = input.value.trim() || 'بدون وصف';
+            const description = input.value.trim() || 'No description';
 
             const existing = sortedMarkers.find(m => Math.abs(m.seconds - currentTime) < 0.5);
             if (existing) {
-                showToast(`⚠️ تم إضافة علامة من قبل في هذا التوقيت: "${existing.title}"`);
+                showToast(`⚠️ A bookmark already exists at this timestamp: "${existing.title}"`);
                 return;
             }
 
             saveBookmark(currentTime, formattedTime, description);
-            showToast('تم حفظ العلامة بنجاح!');
+            showToast('The mark was successfully saved');
             showWhiteCard(currentTime);
         });
 
@@ -386,9 +386,9 @@ function showEditMarkerDialog(markerId, currentTitle) {
         ">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
                 <span style="font-size:24px;">✏️</span>
-                <h3 style="margin:0; color:#1a1a1a; font-size:20px;">تعديل العلامة</h3>
+                <h3 style="margin:0; color:#1a1a1a; font-size:20px;">Edit bookmark</h3>
             </div>
-            <p style="color:#64748b; font-size:13px; margin-bottom:18px;">قم بتعديل وصف العلامة المرجعية</p>
+            <p style="color:#64748b; font-size:13px; margin-bottom:18px;">Edit the bookmark description</p>
             <input type="text" id="editMarkerInput" value="${escapeHtml(currentTitle)}" style="
                 width: 100%;
                 padding: 14px 16px;
@@ -412,7 +412,7 @@ function showEditMarkerDialog(markerId, currentTitle) {
                     font-weight: 600;
                     font-size: 14px;
                     transition: background 0.15s ease;
-                ">إلغاء</button>
+                ">Cancel</button>
                 <button id="editSaveBtn" style="
                     padding: 10px 24px;
                     border: none;
@@ -423,7 +423,7 @@ function showEditMarkerDialog(markerId, currentTitle) {
                     font-weight: 600;
                     font-size: 14px;
                     transition: background 0.15s ease;
-                ">💾 حفظ التعديل</button>
+                ">💾 Save التعديل</button>
             </div>
         </div>
     `;
@@ -492,8 +492,8 @@ function deleteMarkerFromVideo(markerId, videoId, callback) {
 }
 
 function saveBookmark(currentTime, formattedTime, description) {
-    const videoTitle = document.querySelector('h1.ytd-video-primary-info-renderer')?.textContent?.trim() || 'فيديو بدون عنوان';
-    const channelName = document.querySelector('#owner #channel-name a')?.textContent?.trim() || 'قناة غير معروفة';
+    const videoTitle = document.querySelector('h1.ytd-video-primary-info-renderer')?.textContent?.trim() || 'Untitled video';
+    const channelName = document.querySelector('#owner #channel-name a')?.textContent?.trim() || 'Unknown channel';
     const videoId = window.location.search.split('v=')[1]?.split('&')[0] || 'unknown';
 
     chrome.storage.local.get(['yt_bookmarks_data'], (result) => {
@@ -605,14 +605,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         chrome.runtime.sendMessage({ action: "LOOP_RUNNING" });
 
-        showToast(isInfinite ? '🔄 بدء التكرار المستمر...' : `🔄 بدء التكرار (${maxCount} مرات)`);
+        showToast(isInfinite ? '🔄 Starting infinite loop...' : `🔄 Starting loop (${maxCount} times)`);
 
         loopIntervalTimer = setInterval(() => {
             if (video.currentTime >= endSecs) {
                 if (!isInfinite && counter >= maxCount - 1) {
                     clearInterval(loopIntervalTimer);
                     video.pause();
-                    showToast(`⏹️ انتهى التكرار (${maxCount} مرات) - الفيديو متوقف`);
+                    showToast(`⏹️ Loop finished (${maxCount} times) — video paused`);
 
                     chrome.runtime.sendMessage({
                         action: "LOOP_FINISHED",
@@ -623,7 +623,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     video.play();
                     counter++;
                     if (counter % 5 === 0 && !isInfinite) {
-                        showToast(`🔄 تم التكرار ${counter} مرات من ${maxCount}`);
+                        showToast(`🔄 Repeated ${counter} times out of ${maxCount}`);
                     }
                 }
             }
@@ -636,7 +636,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "STOP_LOOP") {
         clearInterval(loopIntervalTimer);
         video.pause();
-        showToast('⏹️ تم إيقاف التكرار - الفيديو متوقف');
+        showToast('⏹️ Loop stopped — video paused');
 
         chrome.runtime.sendMessage({
             action: "LOOP_STOPPED"
